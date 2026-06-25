@@ -36,7 +36,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>
-                        com.ayoub.netsight/com.ayoub.netsight.NetSightApp
+                        com.ayoub.netsight.NetSightApp
                     </mainClass>
                 </configuration>
             </plugin>

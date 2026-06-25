@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" prefWidth="920" prefHeight="620">
+
+    <!-- TOP TOOLBAR-->
+    <top>
+        <VBox spacing="10">
+            <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+            <!-- Row 1: IP range + action buttons -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Subnet"/>
+                <TextField fx:id="tfSubnet" prefWidth="150"/>
+                <Label text="From"/>
+                <TextField fx:id="tfStart" prefWidth="60"/>
+                <Label text="To" />
+                <TextField fx:id="tfEnd" prefWidth="60"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnScan" text="Scan"/>
+                <Button fx:id="btnStop" text="Stop"/>
+            </HBox>
+
+            <!-- Row 2: Sliders -->
+            <HBox spacing="14" alignment="CENTER_LEFT">
+                <Label text="Threads"/>
+                <Slider fx:id="slThreads" min="1" max="200" prefWidth="180"/>
+                <Label fx:id="lblThreads" text="50"/>
+                <Label text="Timeout"/>
+                <Slider fx:id="slTimeout" min="100" max="2000" prefWidth="180"/>
+                <Label fx:id="lblTimeout" text="500 ms"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- RESULTS TABLE-->
+    <center>
+        <TableView fx:id="table">
+            <columns>
+                <TableColumn fx:id="colIp"     text="IP Address"  prefWidth="140"/>
+                <TableColumn fx:id="colHost"   text="Hostname"    prefWidth="220"/>
+                <TableColumn fx:id="colStatus" text="Status"      prefWidth="80"/>
+                <TableColumn fx:id="colPing"   text="Ping (ms)"   prefWidth="90"/>
+                <TableColumn fx:id="colPorts"  text="Open Ports"  prefWidth="380"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <!--STATUS BAR-->
+    <bottom>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <padding><Insets top="8" right="14" bottom="8" left="14"/></padding>
+            <ProgressBar fx:id="pbProgress" prefWidth="220" progress="0"/>
+            <Label fx:id="lblStatus" text="Ready"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblFound" text="0 hosts"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
