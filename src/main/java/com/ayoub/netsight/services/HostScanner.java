@@ -45,7 +45,7 @@ public class HostScanner implements Callable<HostInfo> {
                 info.setOpenPorts(PortScanner.scan(ip, PortScanner.COMMON_PORTS, timeoutMs));
             }
         } catch (Exception e) {
-            // host unreachable or DNS error — leave alive=false
+            // host unreachable or DNS error — leave alive = false
         }
         return info;
     }
