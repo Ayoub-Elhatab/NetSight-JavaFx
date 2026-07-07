@@ -71,23 +71,47 @@ public class MainController {
         results.clear();
         pbProgress.setProgress(0);
         lblFound.setText("0 hosts");
-        lblStatus.setText("Scanning…");
         btnScan.setDisable(true);
         btnStop.setDisable(false);
 
-        String subnet  = tfSubnet.getText().trim();
-        int    start   = Integer.parseInt(tfStart.getText().trim());
-        int    end     = Integer.parseInt(tfEnd.getText().trim());
-        int    threads = (int) slThreads.getValue();
-        int    timeout = (int) slTimeout.getValue();
+        String subnetInput = tfSubnet.getText().trim();
+        String startText   = tfStart.getText().trim();
+        String endText     = tfEnd.getText().trim();
+
+        String subnet;
+        int start, end;
+
+        // Single IP mode — if From/To are empty
+        if (startText.isEmpty() || endText.isEmpty()) {
+            //  "192.168.110.200" → subnet="192.168.110." start=200 end=200
+            int lastDot = subnetInput.lastIndexOf('.');
+            if (lastDot == -1) {
+                lblStatus.setText("Invalid IP");
+                btnScan.setDisable(false);
+                btnStop.setDisable(true);
+                return;
+            }
+            subnet = subnetInput.substring(0, lastDot + 1);
+            start  = Integer.parseInt(subnetInput.substring(lastDot + 1));
+            end    = start;
+        } else {
+            // Range mode — subnet field should be "192.168.1." with From/To filled
+            subnet = subnetInput.endsWith(".") ? subnetInput : subnetInput + ".";
+            start  = Integer.parseInt(startText);
+            end    = Integer.parseInt(endText);
+        }
+
+        lblStatus.setText("Scanning…");
+        int threads = (int) slThreads.getValue();
+        int timeout = (int) slTimeout.getValue();
 
         scanService.scan(subnet, start, end, threads, timeout,
-                /* onFound */ host -> {
+                host -> {
                     results.add(host);
                     int n = results.size();
                     lblFound.setText(n + " host" + (n == 1 ? "" : "s") + " found");
                 },
-                /* onProgress */ (done, total) -> {
+                (done, total) -> {
                     pbProgress.setProgress((double) done / total);
                     if (done >= total) {
                         lblStatus.setText("Scan complete");
