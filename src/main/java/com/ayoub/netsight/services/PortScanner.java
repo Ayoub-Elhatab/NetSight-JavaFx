@@ -9,6 +9,9 @@ import java.util.Map;
 
 /**
  * Probes a list of ports on a given IP by attempting a TCP connection.
+ *
+ * @author Ayoub Elhatab
+ * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
  */
 public class PortScanner {
 

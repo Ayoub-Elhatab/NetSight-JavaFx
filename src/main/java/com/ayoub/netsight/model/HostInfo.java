@@ -7,6 +7,9 @@ import java.util.List;
 /**
  * Represents one discovered host on the LAN.
  * Uses JavaFX StringProperty / LongProperty so TableView columns bind and update automatically.
+ *
+ * @author Ayoub Elhatab
+ * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
  */
 public class HostInfo {
 
