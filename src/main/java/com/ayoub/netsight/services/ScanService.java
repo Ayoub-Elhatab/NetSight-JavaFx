@@ -2,6 +2,8 @@ package com.ayoub.netsight.services;
 
 import com.ayoub.netsight.model.HostInfo;
 import javafx.application.Platform;
+
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,12 +30,14 @@ public class ScanService {
      * @param rangeEnd   last  host octet, e.g. 254
      * @param threads    thread pool size (50–100 works well for LAN)
      * @param timeoutMs  per-host timeout in milliseconds
+     * @param ports list of ports
      * @param onFound    called on FX thread for every alive host
      * @param onProgress called on FX thread with (done, total)
      */
     public void scan(String subnet,
                      int rangeStart, int rangeEnd,
                      int threads,   int timeoutMs,
+                     List<Integer> ports,
                      Consumer<HostInfo>    onFound,
                      BiConsumer<Integer, Integer> onProgress) {
 
@@ -46,7 +50,7 @@ public class ScanService {
             final String ip = subnet + i;
 
             executor.submit(() -> {
-                HostInfo info = new HostScanner(ip, timeoutMs).call();
+                HostInfo info = new HostScanner(ip, timeoutMs, ports).call();
                 int d = done.incrementAndGet();
 
                 // All UI updates MUST happen on the FX thread

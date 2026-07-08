@@ -10,21 +10,26 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainController {
 
     // Toolbar controls
     @FXML private TextField tfSubnet;
     @FXML private TextField tfStart;
     @FXML private TextField tfEnd;
-    @FXML private Slider    slThreads;
-    @FXML private Label     lblThreads;
-    @FXML private Slider    slTimeout;
-    @FXML private Label     lblTimeout;
-    @FXML private Button    btnScan;
-    @FXML private Button    btnStop;
+    @FXML private TextField tfPortFrom;
+    @FXML private TextField tfPortTo;
+    @FXML private Slider slThreads;
+    @FXML private Label lblThreads;
+    @FXML private Slider slTimeout;
+    @FXML private Label lblTimeout;
+    @FXML private Button btnScan;
+    @FXML private Button btnStop;
 
     // Results table
-    @FXML private TableView<HostInfo>          table;
+    @FXML private TableView<HostInfo> table;
     @FXML private TableColumn<HostInfo, String> colIp;
     @FXML private TableColumn<HostInfo, String> colHost;
     @FXML private TableColumn<HostInfo, String> colStatus;
@@ -33,10 +38,10 @@ public class MainController {
 
     // Status bar
     @FXML private ProgressBar pbProgress;
-    @FXML private Label       lblStatus;
-    @FXML private Label       lblFound;
+    @FXML private Label lblStatus;
+    @FXML private Label lblFound;
 
-    private final ObservableList<HostInfo> results     = FXCollections.observableArrayList();
+    private final ObservableList<HostInfo> results = FXCollections.observableArrayList();
     private final ScanService scanService = new ScanService();
 
     @FXML
@@ -75,8 +80,8 @@ public class MainController {
         btnStop.setDisable(false);
 
         String subnetInput = tfSubnet.getText().trim();
-        String startText   = tfStart.getText().trim();
-        String endText     = tfEnd.getText().trim();
+        String startText = tfStart.getText().trim();
+        String endText = tfEnd.getText().trim();
 
         String subnet;
         int start, end;
@@ -105,7 +110,15 @@ public class MainController {
         int threads = (int) slThreads.getValue();
         int timeout = (int) slTimeout.getValue();
 
-        scanService.scan(subnet, start, end, threads, timeout,
+        int portFrom = tfPortFrom.getText().trim().isEmpty() ? 1    : Integer.parseInt(tfPortFrom.getText().trim());
+        int portTo   = tfPortTo.getText().trim().isEmpty()   ? 9999 : Integer.parseInt(tfPortTo.getText().trim());
+
+        List<Integer> portsToScan = new ArrayList<>();
+        for (int p = portFrom; p <= portTo; p++) {
+            portsToScan.add(p);
+        }
+
+        scanService.scan(subnet, start, end, threads, timeout,portsToScan,
                 host -> {
                     results.add(host);
                     int n = results.size();

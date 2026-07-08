@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Probes a list of ports on a given IP by attempting a TCP connection.
@@ -15,27 +19,6 @@ import java.util.Map;
  */
 public class PortScanner {
 
-    /** most commonly encountered ports on a LAN. */
-    public static final List<Integer> COMMON_PORTS = List.of(
-            21,
-            22,   // SSH
-            23,   // Telnet (legacy)
-            25,   // SMTP
-            53,   // DNS
-            80,   // HTTP
-            110,  // POP3
-            135,  // Windows RPC
-            139,  // NetBIOS
-            143,  // IMAP
-            443,  // HTTPS
-            445,  // SMB (file sharing)
-            3306, // MySQL
-            3389, // RDP (Windows Remote Desktop)
-            5432, // PostgreSQL
-            5900, // VNC
-            8080, // HTTP alt / app servers
-            8443  // HTTPS alt
-    );
 
     public static final Map<Integer, String> SERVICE_NAMES = Map.ofEntries(
             Map.entry(21,   "FTP"),
@@ -59,16 +42,28 @@ public class PortScanner {
      * @return list of ports that accepted a connection
      */
     public static List<Integer> scan(String ip, List<Integer> ports, int timeoutMs) {
-        List<Integer> open = new ArrayList<>();
+        List<Integer> open = Collections.synchronizedList(new ArrayList<>());
+        ExecutorService pool = Executors.newFixedThreadPool(
+                Math.min(ports.size(), 100)  // max 100 threads per host
+        );
+
+        List<Future<?>> futures = new ArrayList<>();
         for (int port : ports) {
-            try (Socket s = new Socket()) {
-                s.connect(new InetSocketAddress(ip, port), timeoutMs);
-                // connection accepted = port open
-                open.add(port);
-            } catch (IOException e) {
-                // refused or timeout = closed
-            }
+            futures.add(pool.submit(() -> {
+                try (Socket s = new Socket()) {
+                    s.connect(new InetSocketAddress(ip, port), timeoutMs);
+                    open.add(port);
+                } catch (IOException ignored) {}
+            }));
         }
+
+        // wait for all ports to finish
+        for (Future<?> f : futures) {
+            try { f.get(); } catch (Exception ignored) {}
+        }
+
+        pool.shutdown();
+        Collections.sort(open);
         return open;
     }
 }

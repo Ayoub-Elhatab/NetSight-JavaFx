@@ -3,6 +3,7 @@ package com.ayoub.netsight.services;
 
 import com.ayoub.netsight.model.HostInfo;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -20,10 +21,12 @@ public class HostScanner implements Callable<HostInfo> {
 
     private final String ip;
     private final int    timeoutMs;
+    private final List<Integer> ports;
 
-    public HostScanner(String ip, int timeoutMs) {
+    public HostScanner(String ip, int timeoutMs, List<Integer> ports) {
         this.ip        = ip;
         this.timeoutMs = timeoutMs;
+        this.ports     = ports;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class HostScanner implements Callable<HostInfo> {
                 info.setHostname(host.equals(ip) ? "Unknown" : host);
 
                 // TCP port scan on common ports
-                info.setOpenPorts(PortScanner.scan(ip, PortScanner.COMMON_PORTS, timeoutMs));
+                info.setOpenPorts(PortScanner.scan(ip, ports, timeoutMs));
             }
         } catch (Exception e) {
             // host unreachable or DNS error — leave alive = false
