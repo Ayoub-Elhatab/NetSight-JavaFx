@@ -23,21 +23,14 @@
                 <Label text="Ports"/>
                 <TextField fx:id="tfPortFrom" promptText="1" prefWidth="55"/>
                 <Label text="–"/>
-                <TextField fx:id="tfPortTo" promptText="9999" prefWidth="55"/>
+                <TextField fx:id="tfPortTo" promptText="1024" prefWidth="55"/>
+
+                <Label text="Mode"/>
+                <ComboBox fx:id="cbMode" prefWidth="100"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="btnScan" text="Scan" onAction="#onScan"/>
                 <Button fx:id="btnStop" text="Stop" onAction="#onStop"/>
-            </HBox>
-
-            <!-- Row 2: Sliders -->
-            <HBox spacing="14" alignment="CENTER_LEFT">
-                <Label text="Threads"/>
-                <Slider fx:id="slThreads" min="1" max="200" prefWidth="180"/>
-                <Label fx:id="lblThreads" text="50"/>
-                <Label text="Timeout"/>
-                <Slider fx:id="slTimeout" min="100" max="2000" prefWidth="180"/>
-                <Label fx:id="lblTimeout" text="500 ms"/>
             </HBox>
         </VBox>
     </top>

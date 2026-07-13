@@ -9,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +20,7 @@ public class MainController {
     @FXML private TextField tfEnd;
     @FXML private TextField tfPortFrom;
     @FXML private TextField tfPortTo;
-    @FXML private Slider slThreads;
-    @FXML private Label lblThreads;
-    @FXML private Slider slTimeout;
-    @FXML private Label lblTimeout;
+    @FXML private ComboBox<String> cbMode;
     @FXML private Button btnScan;
     @FXML private Button btnStop;
 
@@ -60,14 +56,9 @@ public class MainController {
         colPorts .setCellValueFactory(new PropertyValueFactory<>("ports"));
         table.setItems(results);
 
-        // Slider live-update labels
-        slThreads.valueProperty().addListener((o, ov, nv) ->
-                lblThreads.setText(String.valueOf(nv.intValue())));
-        slTimeout.valueProperty().addListener((o, ov, nv) ->
-                lblTimeout.setText(nv.intValue() + " ms"));
+        cbMode.getItems().addAll("Fast", "Normal", "Deep");
+        cbMode.setValue("Normal");
 
-        slThreads.setValue(50);
-        slTimeout.setValue(500);
         btnStop.setDisable(true);
     }
 
@@ -107,15 +98,20 @@ public class MainController {
         }
 
         lblStatus.setText("Scanning…");
-        int threads = (int) slThreads.getValue();
-        int timeout = (int) slTimeout.getValue();
 
         int portFrom = tfPortFrom.getText().trim().isEmpty() ? 1    : Integer.parseInt(tfPortFrom.getText().trim());
-        int portTo   = tfPortTo.getText().trim().isEmpty()   ? 9999 : Integer.parseInt(tfPortTo.getText().trim());
+        int portTo   = tfPortTo.getText().trim().isEmpty()   ? 1024 : Integer.parseInt(tfPortTo.getText().trim());
 
         List<Integer> portsToScan = new ArrayList<>();
         for (int p = portFrom; p <= portTo; p++) {
             portsToScan.add(p);
+        }
+
+        int threads, timeout;
+        switch (cbMode.getValue()) {
+            case "Fast" -> { threads = 100; timeout = 100; }
+            case "Deep" -> { threads = 30;  timeout = 500; }
+            default     -> { threads = 50;  timeout = 200; }
         }
 
         scanService.scan(subnet, start, end, threads, timeout,portsToScan,

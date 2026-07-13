@@ -43,23 +43,25 @@ public class PortScanner {
      */
     public static List<Integer> scan(String ip, List<Integer> ports, int timeoutMs) {
         List<Integer> open = Collections.synchronizedList(new ArrayList<>());
-        ExecutorService pool = Executors.newFixedThreadPool(
-                Math.min(ports.size(), 100)  // max 100 threads per host
-        );
-
+        ExecutorService pool = Executors.newFixedThreadPool(Math.min(ports.size(), 100));// max 100 threads per host
+;
         List<Future<?>> futures = new ArrayList<>();
         for (int port : ports) {
             futures.add(pool.submit(() -> {
                 try (Socket s = new Socket()) {
                     s.connect(new InetSocketAddress(ip, port), timeoutMs);
                     open.add(port);
-                } catch (IOException ignored) {}
+                } catch (IOException ex) {
+
+                }
             }));
         }
 
         // wait for all ports to finish
         for (Future<?> f : futures) {
-            try { f.get(); } catch (Exception ignored) {}
+            try { f.get(); } catch (Exception ex) {
+
+            }
         }
 
         pool.shutdown();

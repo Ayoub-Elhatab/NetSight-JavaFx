@@ -2,7 +2,6 @@ package com.ayoub.netsight.services;
 
 import com.ayoub.netsight.model.HostInfo;
 import javafx.application.Platform;
-
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
