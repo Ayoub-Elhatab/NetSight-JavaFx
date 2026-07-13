@@ -1,6 +1,7 @@
 package com.ayoub.netsight.controllers;
 
 
+import com.ayoub.netsight.NetSightApp;
 import com.ayoub.netsight.model.HostInfo;
 import com.ayoub.netsight.services.ScanService;
 import com.ayoub.netsight.utils.NetworkUtil;
@@ -9,8 +10,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainController {
 
@@ -36,6 +41,11 @@ public class MainController {
     @FXML private ProgressBar pbProgress;
     @FXML private Label lblStatus;
     @FXML private Label lblFound;
+
+    private long scanStartTime;
+    private int  totalScanned;
+    private int  totalAlive;
+    private int  totalWithPorts;
 
     private final ObservableList<HostInfo> results = FXCollections.observableArrayList();
     private final ScanService scanService = new ScanService();
@@ -69,6 +79,11 @@ public class MainController {
         lblFound.setText("0 hosts");
         btnScan.setDisable(true);
         btnStop.setDisable(false);
+
+        scanStartTime = System.currentTimeMillis();
+        totalScanned  = 0;
+        totalAlive    = 0;
+        totalWithPorts = 0;
 
         String subnetInput = tfSubnet.getText().trim();
         String startText = tfStart.getText().trim();
@@ -117,15 +132,19 @@ public class MainController {
         scanService.scan(subnet, start, end, threads, timeout,portsToScan,
                 host -> {
                     results.add(host);
+                    totalAlive++;
+                    if (!host.getOpenPorts().isEmpty()) totalWithPorts++;
                     int n = results.size();
                     lblFound.setText(n + " host" + (n == 1 ? "" : "s") + " found");
                 },
                 (done, total) -> {
                     pbProgress.setProgress((double) done / total);
+                    totalScanned = done;
                     if (done >= total) {
                         lblStatus.setText("Scan complete");
                         btnScan.setDisable(false);
                         btnStop.setDisable(true);
+                        showStats(total);
                     }
                 }
         );
@@ -137,5 +156,39 @@ public class MainController {
         lblStatus.setText("Stopped");
         btnScan.setDisable(false);
         btnStop.setDisable(true);
+    }
+
+    private void showStats(int totalHosts) {
+        long elapsed = System.currentTimeMillis() - scanStartTime;
+        double totalSec   = elapsed / 1000.0;
+        double avgPerHost = totalSec / totalHosts;
+
+        String subnetInput = tfSubnet.getText().trim();
+        String startText   = tfStart.getText().trim();
+        String endText     = tfEnd.getText().trim();
+
+        String rangeText;
+        if (startText.isEmpty() || endText.isEmpty()) {
+            rangeText = subnetInput;
+        } else {
+            String subnet = subnetInput.endsWith(".") ? subnetInput : subnetInput + ".";
+            rangeText = subnet + startText + " - " + subnet + endText;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Scan Statistics");
+        alert.setHeaderText(null);
+        alert.setGraphic(null);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/network-hub.png"))));
+        alert.setContentText(
+                "Total time: "        + String.format("%.2f", totalSec)   + " sec\n" +
+                        "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n\n" +
+                        "IP Range\n"          + rangeText                          + "\n\n" +
+                        "Hosts scanned: "     + totalHosts                         + "\n" +
+                        "Hosts alive: "       + totalAlive                         + "\n" +
+                        "With open ports: "   + totalWithPorts
+        );
+        alert.showAndWait();
     }
 }
