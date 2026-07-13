@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.ayoub.netsight.utils.JavaFxUtils.showInfo;
+
 public class MainController {
 
     // Toolbar controls
@@ -98,20 +100,13 @@ public class MainController {
             HostInfo h = table.getSelectionModel().getSelectedItem();
             if (h == null) return;
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("IP address details");
-            alert.setHeaderText(null);
-            alert.setGraphic(null);
-            alert.setContentText(
-                    "IP:        " + h.getIp() + "\n" +
-                            "Ping:      " + h.getPingMs() + " ms\n" +
-                            "Hostname:  " + h.hostnameProperty().get() + "\n" +
-                            "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""))
-            );
-            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-            alertStage.getIcons().add(new Image(Objects.requireNonNull(
-                    NetSightApp.class.getResourceAsStream("/icons/network-hub.png"))));
-            alert.showAndWait();
+            String content = "IP:        " + h.getIp() + "\n" +
+                    "Ping:      " + h.getPingMs() + " ms\n" +
+                    "Hostname:  " + h.hostnameProperty().get() + "\n" +
+                    "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""));
+
+            showInfo("IP address details",content);
+
         });
 
         // Rescan IP
@@ -252,20 +247,14 @@ public class MainController {
             rangeText = subnet + startText + " - " + subnet + endText;
         }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Scan Statistics");
-        alert.setHeaderText(null);
-        alert.setGraphic(null);
-        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-        alertStage.getIcons().add(new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/network-hub.png"))));
-        alert.setContentText(
-                "Total time: "        + String.format("%.2f", totalSec)   + " sec\n" +
-                        "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n\n" +
-                        "IP Range\n"          + rangeText                          + "\n\n" +
-                        "Hosts scanned: "     + totalHosts                         + "\n" +
-                        "Hosts alive: "       + totalAlive                         + "\n" +
-                        "With open ports: "   + totalWithPorts
-        );
-        alert.showAndWait();
+        String content = "Total time: "        + String.format("%.2f", totalSec)   + " sec\n" +
+                "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n" +
+                "IP Range: "          + rangeText                          + "\n" +
+                "Hosts scanned: "     + totalHosts                         + "\n" +
+                "Hosts alive: "       + totalAlive                         + "\n" +
+                "With open ports: "   + totalWithPorts;
+
+        showInfo("Scan Statistics",content);
+
     }
 }
