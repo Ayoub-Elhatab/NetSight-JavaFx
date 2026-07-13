@@ -1,7 +1,6 @@
 package com.ayoub.netsight.controllers;
 
 
-import com.ayoub.netsight.NetSightApp;
 import com.ayoub.netsight.model.HostInfo;
 import com.ayoub.netsight.services.ScanService;
 import com.ayoub.netsight.utils.NetworkUtil;
@@ -10,13 +9,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import static com.ayoub.netsight.utils.JavaFxUtils.showInfo;
 
 public class MainController {
@@ -73,75 +69,8 @@ public class MainController {
 
         btnStop.setDisable(true);
 
-        // Right-click context menu
-        ContextMenu contextMenu = new ContextMenu();
+        showRightClickMenu();
 
-        MenuItem menuDetails = new MenuItem("Show details");
-        MenuItem menuRescan  = new MenuItem("Rescan IP");
-        MenuItem menuCopyIp  = new MenuItem("Copy IP");
-        MenuItem menuCopyDetails = new MenuItem("Copy details");
-
-        contextMenu.getItems().addAll(menuDetails, menuRescan, new SeparatorMenuItem(), menuCopyIp, menuCopyDetails);
-
-        // only show when clicking on a row
-        table.setRowFactory(tv -> {
-            TableRow<HostInfo> row = new TableRow<>();
-            row.setOnContextMenuRequested(e -> {
-                if (!row.isEmpty()) {
-                    table.getSelectionModel().select(row.getItem());
-                    contextMenu.show(row, e.getScreenX(), e.getScreenY());
-                }
-            });
-            return row;
-        });
-
-        // Show details
-        menuDetails.setOnAction(e -> {
-            HostInfo h = table.getSelectionModel().getSelectedItem();
-            if (h == null) return;
-
-            String content = "IP:        " + h.getIp() + "\n" +
-                    "Ping:      " + h.getPingMs() + " ms\n" +
-                    "Hostname:  " + h.hostnameProperty().get() + "\n" +
-                    "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""));
-
-            showInfo("IP address details",content);
-
-        });
-
-        // Rescan IP
-        menuRescan.setOnAction(e -> {
-            HostInfo h = table.getSelectionModel().getSelectedItem();
-            if (h == null) return;
-            results.remove(h);
-            tfSubnet.setText(h.getIp());
-            tfStart.setText("");
-            tfEnd.setText("");
-            onScan();
-        });
-
-       // Copy IP
-        menuCopyIp.setOnAction(e -> {
-            HostInfo h = table.getSelectionModel().getSelectedItem();
-            if (h == null) return;
-            javafx.scene.input.Clipboard.getSystemClipboard().setContent(
-                    new javafx.scene.input.ClipboardContent() {{ putString(h.getIp()); }}
-            );
-        });
-
-       // Copy details
-        menuCopyDetails.setOnAction(e -> {
-            HostInfo h = table.getSelectionModel().getSelectedItem();
-            if (h == null) return;
-            String details =
-                    "IP:        " + h.getIp() + "\n" +
-                            "Ping:      " + h.getPingMs() + " ms\n" +
-                            "Hostname:  " + h.hostnameProperty().get() + "\n" +
-                            "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""));
-            javafx.scene.input.Clipboard.getSystemClipboard().setContent(
-                    new javafx.scene.input.ClipboardContent() {{ putString(details); }}
-            );
-        });
     }
 
     @FXML
@@ -216,7 +145,7 @@ public class MainController {
                         lblStatus.setText("Scan complete");
                         btnScan.setDisable(false);
                         btnStop.setDisable(true);
-                        showStats(total);
+                        showScanStatistics(total);
                     }
                 }
         );
@@ -230,7 +159,7 @@ public class MainController {
         btnStop.setDisable(true);
     }
 
-    private void showStats(int totalHosts) {
+    private void showScanStatistics(int totalHosts) {
         long elapsed = System.currentTimeMillis() - scanStartTime;
         double totalSec   = elapsed / 1000.0;
         double avgPerHost = totalSec / totalHosts;
@@ -256,5 +185,75 @@ public class MainController {
 
         showInfo("Scan Statistics",content);
 
+    }
+
+    private void showRightClickMenu(){
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem menuDetails = new MenuItem("Show details");
+        MenuItem menuRescan  = new MenuItem("Rescan IP");
+        MenuItem menuCopyIp  = new MenuItem("Copy IP");
+        MenuItem menuCopyDetails = new MenuItem("Copy details");
+
+        contextMenu.getItems().addAll(menuDetails, menuRescan, new SeparatorMenuItem(), menuCopyIp, menuCopyDetails);
+
+        // only show when clicking on a row
+        table.setRowFactory(tv -> {
+            TableRow<HostInfo> row = new TableRow<>();
+            row.setOnContextMenuRequested(e -> {
+                if (!row.isEmpty()) {
+                    table.getSelectionModel().select(row.getItem());
+                    contextMenu.show(row, e.getScreenX(), e.getScreenY());
+                }
+            });
+            return row;
+        });
+
+        // Show details
+        menuDetails.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+
+            String content = "IP:        " + h.getIp() + "\n" +
+                    "Ping:      " + h.getPingMs() + " ms\n" +
+                    "Hostname:  " + h.hostnameProperty().get() + "\n" +
+                    "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""));
+
+            showInfo("IP address details",content);
+
+        });
+
+        // Rescan IP
+        menuRescan.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+            results.remove(h);
+            tfSubnet.setText(h.getIp());
+            tfStart.setText("");
+            tfEnd.setText("");
+            onScan();
+        });
+
+        // Copy IP
+        menuCopyIp.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+            javafx.scene.input.Clipboard.getSystemClipboard().setContent(
+                    new javafx.scene.input.ClipboardContent() {{ putString(h.getIp()); }}
+            );
+        });
+
+        // Copy details
+        menuCopyDetails.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+            String details =
+                    "IP:        " + h.getIp() + "\n" +
+                            "Ping:      " + h.getPingMs() + " ms\n" +
+                            "Hostname:  " + h.hostnameProperty().get() + "\n" +
+                            "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""));
+
+            Clipboard.getSystemClipboard().setContent(new ClipboardContent() {{ putString(details); }});
+        });
     }
 }
