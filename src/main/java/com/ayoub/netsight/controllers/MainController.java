@@ -70,6 +70,83 @@ public class MainController {
         cbMode.setValue("Normal");
 
         btnStop.setDisable(true);
+
+        // Right-click context menu
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem menuDetails = new MenuItem("Show details");
+        MenuItem menuRescan  = new MenuItem("Rescan IP");
+        MenuItem menuCopyIp  = new MenuItem("Copy IP");
+        MenuItem menuCopyDetails = new MenuItem("Copy details");
+
+        contextMenu.getItems().addAll(menuDetails, menuRescan, new SeparatorMenuItem(), menuCopyIp, menuCopyDetails);
+
+        // only show when clicking on a row
+        table.setRowFactory(tv -> {
+            TableRow<HostInfo> row = new TableRow<>();
+            row.setOnContextMenuRequested(e -> {
+                if (!row.isEmpty()) {
+                    table.getSelectionModel().select(row.getItem());
+                    contextMenu.show(row, e.getScreenX(), e.getScreenY());
+                }
+            });
+            return row;
+        });
+
+        // Show details
+        menuDetails.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("IP address details");
+            alert.setHeaderText(null);
+            alert.setGraphic(null);
+            alert.setContentText(
+                    "IP:        " + h.getIp() + "\n" +
+                            "Ping:      " + h.getPingMs() + " ms\n" +
+                            "Hostname:  " + h.hostnameProperty().get() + "\n" +
+                            "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""))
+            );
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(
+                    NetSightApp.class.getResourceAsStream("/icons/network-hub.png"))));
+            alert.showAndWait();
+        });
+
+        // Rescan IP
+        menuRescan.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+            results.remove(h);
+            tfSubnet.setText(h.getIp());
+            tfStart.setText("");
+            tfEnd.setText("");
+            onScan();
+        });
+
+       // Copy IP
+        menuCopyIp.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+            javafx.scene.input.Clipboard.getSystemClipboard().setContent(
+                    new javafx.scene.input.ClipboardContent() {{ putString(h.getIp()); }}
+            );
+        });
+
+       // Copy details
+        menuCopyDetails.setOnAction(e -> {
+            HostInfo h = table.getSelectionModel().getSelectedItem();
+            if (h == null) return;
+            String details =
+                    "IP:        " + h.getIp() + "\n" +
+                            "Ping:      " + h.getPingMs() + " ms\n" +
+                            "Hostname:  " + h.hostnameProperty().get() + "\n" +
+                            "Ports:     " + (h.getOpenPorts().isEmpty() ? "—" : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", ""));
+            javafx.scene.input.Clipboard.getSystemClipboard().setContent(
+                    new javafx.scene.input.ClipboardContent() {{ putString(details); }}
+            );
+        });
     }
 
     @FXML
