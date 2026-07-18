@@ -12,7 +12,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.FileChooser;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +31,7 @@ public class MainController {
     @FXML private ComboBox<String> cbMode;
     @FXML private Button btnScan;
     @FXML private Button btnStop;
+    @FXML private Button btnClear;
     @FXML private Button btnExport;
 
     // Results table
@@ -75,6 +75,7 @@ public class MainController {
         cbMode.setValue("Normal");
 
         btnStop.setDisable(true);
+        btnClear.setDisable(true);
         btnExport.setDisable(true);
 
         showRightClickMenu();
@@ -153,6 +154,7 @@ public class MainController {
                         lblStatus.setText("Scan complete");
                         btnScan.setDisable(false);
                         btnStop.setDisable(true);
+                        btnClear.setDisable(false);
                         btnExport.setDisable(false);
                         showScanStatistics(total);
                     }
@@ -166,6 +168,15 @@ public class MainController {
         lblStatus.setText("Stopped");
         btnScan.setDisable(false);
         btnStop.setDisable(true);
+    }
+
+    @FXML
+    private void onClear() {
+        results.clear();
+        pbProgress.setProgress(0);
+        lblFound.setText("0 hosts");
+        btnExport.setDisable(true);
+        btnClear.setDisable(true);
     }
 
     @FXML
