@@ -21,8 +21,8 @@ public class NetSightApp extends Application {
         stage.getIcons().add(icon);
         stage.setTitle("LAN Network Scanner");
         stage.setScene(scene);
-        stage.setMinWidth(780);
-        stage.setMinHeight(500);
+        stage.setMinWidth(1000);
+        stage.setMinHeight(700);
         stage.show();
     }
 

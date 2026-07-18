@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" prefWidth="920" prefHeight="620" fx:controller="com.ayoub.netsight.controllers.MainController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.ayoub.netsight.controllers.MainController">
 
     <!-- TOP TOOLBAR-->
     <top>
@@ -31,6 +31,7 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="btnScan" text="Scan" onAction="#onScan"/>
                 <Button fx:id="btnStop" text="Stop" onAction="#onStop"/>
+                <Button fx:id="btnExport" text="Export" onAction="#onExport"/>
             </HBox>
         </VBox>
     </top>

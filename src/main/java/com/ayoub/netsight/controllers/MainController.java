@@ -11,6 +11,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.stage.FileChooser;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static com.ayoub.netsight.utils.JavaFxUtils.showInfo;
@@ -26,6 +32,7 @@ public class MainController {
     @FXML private ComboBox<String> cbMode;
     @FXML private Button btnScan;
     @FXML private Button btnStop;
+    @FXML private Button btnExport;
 
     // Results table
     @FXML private TableView<HostInfo> table;
@@ -68,6 +75,7 @@ public class MainController {
         cbMode.setValue("Normal");
 
         btnStop.setDisable(true);
+        btnExport.setDisable(true);
 
         showRightClickMenu();
 
@@ -145,6 +153,7 @@ public class MainController {
                         lblStatus.setText("Scan complete");
                         btnScan.setDisable(false);
                         btnStop.setDisable(true);
+                        btnExport.setDisable(false);
                         showScanStatistics(total);
                     }
                 }
@@ -157,6 +166,38 @@ public class MainController {
         lblStatus.setText("Stopped");
         btnScan.setDisable(false);
         btnStop.setDisable(true);
+    }
+
+    @FXML
+    private void onExport() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export results");
+        fileChooser.setInitialFileName("scan-results.txt");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+
+        File file = fileChooser.showSaveDialog(table.getScene().getWindow());
+        if (file == null) return;
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.newLine();
+            writer.newLine();
+
+            for (HostInfo h : results) {
+                writer.write("IP:       " + h.getIp());
+                writer.newLine();
+                writer.write("Hostname: " + h.hostnameProperty().get());
+                writer.newLine();
+                writer.write("Ping:     " + h.getPingMs() + " ms");
+                writer.newLine();
+                writer.write("Ports:    " + (h.getOpenPorts().isEmpty() ? "—"
+                        : h.getOpenPorts().toString().replaceAll("[\\[\\] ]", "")));
+                writer.newLine();
+                writer.write("----------------------------------------------------------");
+                writer.newLine();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void showScanStatistics(int totalHosts) {
@@ -255,5 +296,6 @@ public class MainController {
 
             Clipboard.getSystemClipboard().setContent(new ClipboardContent() {{ putString(details); }});
         });
+
     }
 }
