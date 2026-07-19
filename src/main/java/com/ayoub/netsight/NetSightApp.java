@@ -8,9 +8,22 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.util.Objects;
 
+/**
+ * Entry point of the NetSight application.
+ * Bootstraps the JavaFX runtime, loads the main FXML layout,
+ * and configures the primary stage with title, icon, and minimum dimensions.
+ *
+ * @author Ayoub Elhatab
+ * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
+ */
 public class NetSightApp extends Application {
 
-
+    /**
+     * Initializes and displays the primary stage.
+     *
+     * @param stage the primary stage provided by the JavaFX runtime
+     * @throws Exception if the FXML file fails to load
+     */
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));

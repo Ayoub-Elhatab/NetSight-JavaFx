@@ -13,7 +13,9 @@ import java.util.Enumeration;
 public class NetworkUtil {
 
     /**
-     * @return local IPv4 address, e.g. "192.168.1.42" Falls back to "192.168.1.1" if detection fails.
+     * Detects the local non-loopback IPv4 address of this machine.
+     *
+     * @return local IPv4 address e.g. {@code "192.168.1.42"}, or {@code "192.168.1.1"} if detection fails
      */
     public static String getLocalIp() {
         try {
@@ -39,8 +41,11 @@ public class NetworkUtil {
     }
 
     /**
-     * Extracts the subnet prefix from an IP.
-     * "192.168.1.42"  →  "192.168.1."
+     * Extracts the subnet prefix from a full IPv4 address.
+     * e.g. {@code "192.168.1.42"} → {@code "192.168.1."}
+     *
+     * @param ip the full IPv4 address
+     * @return   the subnet prefix ending with a dot
      */
     public static String toSubnet(String ip) {
         return ip.substring(0, ip.lastIndexOf('.') + 1);

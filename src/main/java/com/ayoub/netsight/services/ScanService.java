@@ -24,14 +24,18 @@ public class ScanService {
     private ExecutorService executor;
 
     /**
-     * @param subnet     e.g. "192.168.1."
-     * @param rangeStart first host octet, e.g. 1
-     * @param rangeEnd   last  host octet, e.g. 254
-     * @param threads    thread pool size (50–100 works well for LAN)
-     * @param timeoutMs  per-host timeout in milliseconds
-     * @param ports list of ports
-     * @param onFound    called on FX thread for every alive host
-     * @param onProgress called on FX thread with (done, total)
+     * Launches a concurrent subnet scan over the given IP range.
+     * Submits one {@link HostScanner} task per IP to a fixed thread pool.
+     * Results are dispatched back to the JavaFX Application Thread via {@code Platform.runLater()}.
+     *
+     * @param subnet      the subnet prefix, e.g. {@code "192.168.1."}
+     * @param rangeStart  the first host octet to scan, e.g. {@code 1}
+     * @param rangeEnd    the last host octet to scan, e.g. {@code 254}
+     * @param threads     the thread pool size — 50 to 100 works well for LAN
+     * @param timeoutMs   the per-host connection timeout in milliseconds
+     * @param ports       the list of ports to probe on each alive host
+     * @param onFound     callback invoked on the FX thread for every alive host discovered
+     * @param onProgress  callback invoked on the FX thread with (hostsScanned, totalHosts)
      */
     public void scan(String subnet,
                      int rangeStart, int rangeEnd,
@@ -63,7 +67,9 @@ public class ScanService {
         executor.shutdown();
     }
 
-    /** Immediately cancels all pending scans (user clicked Stop). */
+    /**
+     * Immediately cancels all pending scans (user clicked Stop).
+     **/
     public void stop() {
         if (executor != null) executor.shutdownNow();
     }

@@ -20,6 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.ayoub.netsight.utils.JavaFxUtils.showInfo;
 
+/**
+ * Main controller for the NetSight UI.
+ * Handles user interactions, orchestrates subnet scanning via {@link ScanService},
+ * and updates the results table, progress bar, and status labels accordingly.
+ *
+ * @author Ayoub Elhatab
+ * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
+ */
 public class MainController {
 
     // Toolbar controls
@@ -55,6 +63,11 @@ public class MainController {
     private final ObservableList<HostInfo> results = FXCollections.observableArrayList();
     private final ScanService scanService = new ScanService();
 
+    /**
+     * Initializes the controller after the FXML is loaded.
+     * Pre-fills the subnet field from the local network interface,
+     * binds table columns to {@link HostInfo} properties, and sets up the right-click menu.
+     */
     @FXML
     public void initialize() {
         // Prefill subnet from local network interface
@@ -82,6 +95,12 @@ public class MainController {
 
     }
 
+    /**
+     * Triggered when the user clicks the Scan button.
+     * Resolves the scan mode, builds the port list and IP range,
+     * then delegates to {@link ScanService} to run the concurrent scan.
+     * Supports both single IP mode and range mode.
+     */
     @FXML
     private void onScan() {
         results.clear();
@@ -162,6 +181,10 @@ public class MainController {
         );
     }
 
+    /**
+     * Triggered when the user clicks the Stop button.
+     * Immediately cancels all pending scan tasks via {@link ScanService#stop()}.
+     */
     @FXML
     private void onStop() {
         scanService.stop();
@@ -170,6 +193,11 @@ public class MainController {
         btnStop.setDisable(true);
     }
 
+    /**
+     * Triggered when the user clicks the Clear button.
+     * Clears the results table, resets the progress bar and host counter,
+     * and disables the Export and Clear buttons.
+     */
     @FXML
     private void onClear() {
         results.clear();
@@ -179,6 +207,11 @@ public class MainController {
         btnClear.setDisable(true);
     }
 
+    /**
+     * Triggered when the user clicks the Export button.
+     * Opens a save dialog and writes all current scan results to a {@code .txt} file.
+     * Each host entry includes IP, hostname, ping, and open ports.
+     */
     @FXML
     private void onExport() {
         FileChooser fileChooser = new FileChooser();
@@ -211,6 +244,13 @@ public class MainController {
         }
     }
 
+    /**
+     * Displays a statistics dialog after a scan completes.
+     * Shows total time, average time per host, IP range scanned,
+     * total hosts scanned, alive hosts, and hosts with open ports.
+     *
+     * @param totalHosts the total number of IP addresses that were probed
+     */
     private void showScanStatistics(int totalHosts) {
         long elapsed = System.currentTimeMillis() - scanStartTime;
         double totalSec   = elapsed / 1000.0;
@@ -239,6 +279,11 @@ public class MainController {
 
     }
 
+    /**
+     * Builds and attaches a right-click context menu to the results table.
+     * Available actions: Show details, Rescan IP, Copy IP, Copy details.
+     * Menu is only shown when right-clicking on a non-empty row.
+     */
     private void showRightClickMenu(){
         ContextMenu contextMenu = new ContextMenu();
 

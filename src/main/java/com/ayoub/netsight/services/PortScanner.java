@@ -6,40 +6,28 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * Probes a list of ports on a given IP by attempting a TCP connection.
+ * Utility class for scanning open TCP ports on a given host.
+ * Uses a fixed thread pool to probe ports concurrently for performance.
  *
  * @author Ayoub Elhatab
  * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
  */
 public class PortScanner {
 
-
-    public static final Map<Integer, String> SERVICE_NAMES = Map.ofEntries(
-            Map.entry(21,   "FTP"),
-            Map.entry(22,   "SSH"),
-            Map.entry(23,   "Telnet"),
-            Map.entry(25,   "SMTP"),
-            Map.entry(53,   "DNS"),
-            Map.entry(80,   "HTTP"),
-            Map.entry(443,  "HTTPS"),
-            Map.entry(445,  "SMB"),
-            Map.entry(3306, "MySQL"),
-            Map.entry(3389, "RDP"),
-            Map.entry(5432, "PostgreSQL"),
-            Map.entry(5900, "VNC"),
-            Map.entry(8080, "HTTP-alt"),
-            Map.entry(8443, "HTTPS-alt")
-    );
-
     /**
-     * Scans every port in {@code ports} on {@code ip}.
-     * @return list of ports that accepted a connection
+     * Probes a list of ports on the given IP address concurrently
+     * by attempting a TCP {@link Socket} connection on each port.
+     * A successful connection indicates the port is open.
+     *
+     * @param ip        the target IP address to scan
+     * @param ports     the list of port numbers to probe
+     * @param timeoutMs the connection timeout per port in milliseconds
+     * @return          a sorted list of port numbers that accepted a connection
      */
     public static List<Integer> scan(String ip, List<Integer> ports, int timeoutMs) {
         List<Integer> open = Collections.synchronizedList(new ArrayList<>());

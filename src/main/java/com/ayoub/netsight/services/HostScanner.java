@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * A Callable that fully probes a single IP address:
- *   <li> Ping via InetAddress.isReachable()</li>
- *   <li>Reverse-DNS hostname lookup</li>
- *   <Li>Port scan via PortScanner</Li>
- *
- * <p>Designed to be submitted to an ExecutorService — one task per IP.</p>
+ * A {@link Callable} that fully probes a single IP address in three steps:
+ * <ol>
+ *   <li>Ping via {@link InetAddress#isReachable(int)}</li>
+ *   <li>Reverse-DNS hostname lookup via {@link InetAddress#getCanonicalHostName()}</li>
+ *   <li>TCP port scan via {@link PortScanner#scan(String, List, int)}</li>
+ * </ol>
+ * Designed to be submitted to an {@link java.util.concurrent.ExecutorService} — one task per IP.
  *
  * @author Ayoub Elhatab
  * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
@@ -29,6 +30,11 @@ public class HostScanner implements Callable<HostInfo> {
         this.ports     = ports;
     }
 
+    /**
+     * Executes the full probe sequence: ping → hostname → port scan.
+     *
+     * @return a {@link HostInfo} populated with results, or an empty one with {@code alive = false} if the host is unreachable
+     */
     @Override
     public HostInfo call() {
         HostInfo info = new HostInfo(ip);
