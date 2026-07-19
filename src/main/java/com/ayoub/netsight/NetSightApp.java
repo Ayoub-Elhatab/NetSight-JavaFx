@@ -14,12 +14,12 @@ public class NetSightApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-        Image icon = new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/network-hub.png")));
+        Image icon = new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/eye-scan.png")));
 
         Scene scene = new Scene(loader.load());
 
         stage.getIcons().add(icon);
-        stage.setTitle("LAN Network Scanner");
+        stage.setTitle("NetSight - LAN Network Scanner");
         stage.setScene(scene);
         stage.setMinWidth(1000);
         stage.setMinHeight(700);

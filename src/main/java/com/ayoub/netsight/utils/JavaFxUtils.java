@@ -12,7 +12,7 @@ public class JavaFxUtils {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
         Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-        alertStage.getIcons().add(new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/network-hub.png"))));
+        alertStage.getIcons().add(new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/eye-scan.png"))));
 
         alert.setTitle(title);
         alert.setHeaderText(null);
