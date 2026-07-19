@@ -2,6 +2,8 @@ package com.ayoub.netsight.services;
 
 
 import com.ayoub.netsight.model.HostInfo;
+import lombok.RequiredArgsConstructor;
+
 import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -18,17 +20,12 @@ import java.util.concurrent.Callable;
  * @author Ayoub Elhatab
  * LinkedIn: <a href="https://www.linkedin.com/in/ayoub-elhatab/">Ayoub Elhatab</a>
  */
+@RequiredArgsConstructor
 public class HostScanner implements Callable<HostInfo> {
 
     private final String ip;
-    private final int    timeoutMs;
+    private final int timeoutMs;
     private final List<Integer> ports;
-
-    public HostScanner(String ip, int timeoutMs, List<Integer> ports) {
-        this.ip        = ip;
-        this.timeoutMs = timeoutMs;
-        this.ports     = ports;
-    }
 
     /**
      * Executes the full probe sequence: ping → hostname → port scan.

@@ -28,14 +28,14 @@ public class ScanService {
      * Submits one {@link HostScanner} task per IP to a fixed thread pool.
      * Results are dispatched back to the JavaFX Application Thread via {@code Platform.runLater()}.
      *
-     * @param subnet      the subnet prefix, e.g. {@code "192.168.1."}
+     * @param subnet the subnet prefix, e.g. {@code "192.168.1."}
      * @param rangeStart  the first host octet to scan, e.g. {@code 1}
-     * @param rangeEnd    the last host octet to scan, e.g. {@code 254}
-     * @param threads     the thread pool size — 50 to 100 works well for LAN
-     * @param timeoutMs   the per-host connection timeout in milliseconds
-     * @param ports       the list of ports to probe on each alive host
-     * @param onFound     callback invoked on the FX thread for every alive host discovered
-     * @param onProgress  callback invoked on the FX thread with (hostsScanned, totalHosts)
+     * @param rangeEnd the last host octet to scan, e.g. {@code 254}
+     * @param threads the thread pool size — 50 to 100 works well for LAN
+     * @param timeoutMs the per-host connection timeout in milliseconds
+     * @param ports the list of ports to probe on each alive host
+     * @param onFound callback invoked on the FX thread for every alive host discovered
+     * @param onProgress callback invoked on the FX thread with (hostsScanned, totalHosts)
      */
     public void scan(String subnet,
                      int rangeStart, int rangeEnd,

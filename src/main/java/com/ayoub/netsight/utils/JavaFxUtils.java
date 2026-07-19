@@ -18,7 +18,7 @@ public class JavaFxUtils {
     /**
      * Displays a styled information dialog with the NetSight icon.
      *
-     * @param title   the dialog window title
+     * @param title the dialog window title
      * @param content the message body to display
      */
     public static void showInfo(String title, String content ){

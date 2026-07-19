@@ -45,7 +45,7 @@ public class NetworkUtil {
      * e.g. {@code "192.168.1.42"} → {@code "192.168.1."}
      *
      * @param ip the full IPv4 address
-     * @return   the subnet prefix ending with a dot
+     * @return the subnet prefix ending with a dot
      */
     public static String toSubnet(String ip) {
         return ip.substring(0, ip.lastIndexOf('.') + 1);

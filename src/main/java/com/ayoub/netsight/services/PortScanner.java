@@ -24,10 +24,10 @@ public class PortScanner {
      * by attempting a TCP {@link Socket} connection on each port.
      * A successful connection indicates the port is open.
      *
-     * @param ip        the target IP address to scan
-     * @param ports     the list of port numbers to probe
+     * @param ip the target IP address to scan
+     * @param ports the list of port numbers to probe
      * @param timeoutMs the connection timeout per port in milliseconds
-     * @return          a sorted list of port numbers that accepted a connection
+     * @return a sorted list of port numbers that accepted a connection
      */
     public static List<Integer> scan(String ip, List<Integer> ports, int timeoutMs) {
         List<Integer> open = Collections.synchronizedList(new ArrayList<>());

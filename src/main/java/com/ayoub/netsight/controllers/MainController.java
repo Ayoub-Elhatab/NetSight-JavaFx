@@ -92,7 +92,6 @@ public class MainController {
         btnExport.setDisable(true);
 
         showRightClickMenu();
-
     }
 
     /**
@@ -352,6 +351,5 @@ public class MainController {
 
             Clipboard.getSystemClipboard().setContent(new ClipboardContent() {{ putString(details); }});
         });
-
     }
 }
