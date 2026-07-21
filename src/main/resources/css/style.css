@@ -29,7 +29,8 @@
     -fx-border-width: 1.5;
 }
 .button:hover {
-
+    -fx-background-color: #00BFA5;
+    -fx-border-color: #00BFA5;
 }
 
 /* Table */
