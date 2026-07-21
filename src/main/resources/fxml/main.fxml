@@ -29,9 +29,9 @@
             <!-- Row 2: Ports + Mode -->
             <HBox spacing="12" alignment="CENTER_LEFT">
                 <Label text="Ports"/>
-                <TextField fx:id="tfPortFrom" promptText="1"    prefWidth="55"/>
+                <TextField fx:id="tfPortFrom" promptText="1" prefWidth="55"/>
                 <Label text="–"/>
-                <TextField fx:id="tfPortTo"   promptText="1024" prefWidth="55"/>
+                <TextField fx:id="tfPortTo" promptText="1024" prefWidth="55"/>
                 <Label text="Mode"/>
                 <ComboBox fx:id="cbMode" prefWidth="100"/>
             </HBox>
@@ -55,7 +55,7 @@
     <bottom>
         <HBox spacing="12" alignment="CENTER_LEFT">
             <padding><Insets top="8" right="14" bottom="8" left="14"/></padding>
-            <ProgressBar fx:id="pbProgress" prefWidth="220" progress="0"/>
+            <ProgressBar fx:id="pbProgress" prefWidth="220" prefHeight="15" progress="0"/>
             <Label fx:id="lblStatus" text="Ready"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Label fx:id="lblFound" text="0 hosts"/>

@@ -30,6 +30,7 @@ public class NetSightApp extends Application {
         Image icon = new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/eye-scan.png")));
 
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
 
         stage.getIcons().add(icon);
         stage.setTitle("NetSight - LAN Network Scanner");

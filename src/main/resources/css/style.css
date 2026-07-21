@@ -1,0 +1,37 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #f4f4f4;
+}
+
+/* progress bar */
+.progress-bar .bar {
+    -fx-background-color: green;
+    -fx-background-radius: 6;
+}
+.progress-bar .track {
+    -fx-background-color: #ddddd;
+    -fx-background-radius: 6;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #FDEDE3;
+    -fx-border-color: #ff8247;
+    -fx-text-fill: #C2622F;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-border-width: 1.5;
+}
+.button:hover {
+    -fx-background-color: #ff8247;
+    -fx-border-color: #ff8247;
+    -fx-text-fill: white;
+}
+
+
+
+
