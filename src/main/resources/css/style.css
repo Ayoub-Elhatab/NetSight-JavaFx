@@ -74,8 +74,27 @@
     -fx-cursor: hand;
 }
 
-
-
+/* TextField */
+.text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: #D0D7DE;
+    -fx-border-width: 1.5;
+    -fx-padding: 4 10;
+    -fx-text-fill: #333333;
+    -fx-prompt-text-fill: #9E9E9E;
+}
+.text-field:focused {
+    -fx-border-color: -fx-primary-color;
+    -fx-border-width: 1.5;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.text-field {
+    -fx-highlight-fill: -fx-primary-color;
+    -fx-highlight-text-fill: white;
+}
 
 
 
