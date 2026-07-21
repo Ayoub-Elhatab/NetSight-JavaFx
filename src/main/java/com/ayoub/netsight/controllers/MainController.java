@@ -267,11 +267,11 @@ public class MainController {
             rangeText = subnet + startText + " - " + subnet + endText;
         }
 
-        String content = "Total time: "        + String.format("%.2f", totalSec)   + " sec\n" +
-                "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n" +
-                "IP Range: "          + rangeText                          + "\n" +
-                "Hosts scanned: "     + totalHosts                         + "\n" +
-                "Hosts alive: "       + totalAlive                         + "\n" +
+        String content = "Total time: "        + String.format("%.2f", totalSec)   + " sec\n\n" +
+                "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n\n" +
+                "IP Range: "          + rangeText                          + "\n\n" +
+                "Hosts scanned: "     + totalHosts                         + "\n\n" +
+                "Hosts alive: "       + totalAlive                         + "\n\n" +
                 "With open ports: "   + totalWithPorts;
 
         showInfo("Scan Statistics",content);

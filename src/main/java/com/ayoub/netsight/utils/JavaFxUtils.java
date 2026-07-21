@@ -2,6 +2,7 @@ package com.ayoub.netsight.utils;
 
 import com.ayoub.netsight.NetSightApp;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.util.Objects;
@@ -24,9 +25,13 @@ public class JavaFxUtils {
     public static void showInfo(String title, String content ){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(NetSightApp.class.getResource("/css/style.css")).toExternalForm());
+
         Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
         alertStage.getIcons().add(new Image(Objects.requireNonNull(NetSightApp.class.getResourceAsStream("/icons/eye-scan.png"))));
 
+        alert.getDialogPane().getStyleClass().add("custom-alert");
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setGraphic(null);

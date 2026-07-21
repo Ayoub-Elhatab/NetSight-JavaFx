@@ -123,16 +123,25 @@
 .combo-box-popup .list-cell {
     -fx-padding: 6 10;
 }
-
 .combo-box-popup .list-cell:hover {
     -fx-background-color: #E0F2F1;
     -fx-text-fill: black;
     -fx-cursor: hand;
 }
-
 .combo-box-popup .list-cell:selected {
     -fx-background-color: -fx-primary-color;
     -fx-text-fill: white;
+}
+
+/* alert */
+.custom-alert {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+.custom-alert .content.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 13px;
+    -fx-font-weight: 300;
 }
 
 
