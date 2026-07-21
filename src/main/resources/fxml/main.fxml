@@ -40,7 +40,7 @@
 
     <!-- RESULTS TABLE-->
     <center>
-        <TableView fx:id="table">
+        <TableView fx:id="table" styleClass="data-table">
             <columns>
                 <TableColumn fx:id="colIp"     text="IP Address"  prefWidth="140"/>
                 <TableColumn fx:id="colHost"   text="Hostname"    prefWidth="220"/>

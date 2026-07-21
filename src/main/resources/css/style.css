@@ -2,11 +2,13 @@
     -fx-font-family: "Segoe UI", sans-serif;
     -fx-font-size: 13px;
     -fx-background-color: #f4f4f4;
+
+    -fx-primary-color: #00897B;
 }
 
 /* progress bar */
 .progress-bar .bar {
-    -fx-background-color: green;
+    -fx-background-color: -fx-primary-color;
     -fx-background-radius: 6;
 }
 .progress-bar .track {
@@ -16,21 +18,62 @@
 
 /* Buttons */
 .button {
-    -fx-background-color: #FDEDE3;
-    -fx-border-color: #ff8247;
-    -fx-text-fill: #C2622F;
+    -fx-background-color: -fx-primary-color;
+    -fx-border-color: -fx-primary-color;
+    -fx-text-fill: white;
     -fx-background-radius: 16;
     -fx-border-radius: 16;
-    -fx-padding: 6 14;
+    -fx-padding: 4 14;
     -fx-cursor: hand;
     -fx-font-weight: bold;
     -fx-border-width: 1.5;
 }
 .button:hover {
-    -fx-background-color: #ff8247;
-    -fx-border-color: #ff8247;
-    -fx-text-fill: white;
+
 }
+
+/* Table */
+.data-table {
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}
+
+.data-table .column-header-background,
+.data-table .column-header,
+.data-table .corner,
+.data-table .filler {
+    -fx-background-color: -fx-primary-color;
+}
+.table-view:focused {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent;
+}
+
+.data-table .column-header .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.data-table .table-cell {
+    -fx-padding: 8 12;
+    -fx-font-size: 13px;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: transparent;
+}
+.table-row-cell:selected .text {
+    -fx-fill: black;
+}
+.table-row-cell:hover {
+    -fx-background-color: #f2f2f2;
+    -fx-cursor: hand;
+}
+
+
 
 
 
