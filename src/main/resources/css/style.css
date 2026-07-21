@@ -96,5 +96,43 @@
     -fx-highlight-text-fill: white;
 }
 
+/* Labels */
+.label {
+    -fx-text-fill: #616161;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #D0D7DE;
+    -fx-border-width: 1.5;
+    -fx-padding: 2 8;
+    -fx-cursor: hand;
+}
+.combo-box:focused {
+    -fx-border-color: -fx-primary-color;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #D0D7DE;
+}
+.combo-box-popup .list-cell {
+    -fx-padding: 6 10;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #E0F2F1;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: white;
+}
 
 
