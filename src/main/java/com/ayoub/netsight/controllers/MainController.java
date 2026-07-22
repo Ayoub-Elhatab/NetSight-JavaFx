@@ -1,6 +1,7 @@
 package com.ayoub.netsight.controllers;
 
 
+import com.ayoub.netsight.NetSightApp;
 import com.ayoub.netsight.model.HostInfo;
 import com.ayoub.netsight.services.ScanService;
 import com.ayoub.netsight.utils.NetworkUtil;
@@ -18,6 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import static com.ayoub.netsight.utils.JavaFxUtils.showInfo;
 
 /**
@@ -285,6 +288,7 @@ public class MainController {
      */
     private void showRightClickMenu(){
         ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getStyleClass().add(Objects.requireNonNull(NetSightApp.class.getResource("/css/style.css")).toExternalForm());
 
         MenuItem menuDetails = new MenuItem("Show details");
         MenuItem menuRescan  = new MenuItem("Rescan IP");
@@ -334,8 +338,8 @@ public class MainController {
         menuCopyIp.setOnAction(e -> {
             HostInfo h = table.getSelectionModel().getSelectedItem();
             if (h == null) return;
-            javafx.scene.input.Clipboard.getSystemClipboard().setContent(
-                    new javafx.scene.input.ClipboardContent() {{ putString(h.getIp()); }}
+            Clipboard.getSystemClipboard().setContent(
+                    new ClipboardContent() {{ putString(h.getIp()); }}
             );
         });
 
