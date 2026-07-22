@@ -12,11 +12,15 @@
 
             <!-- Row 1: IP range + action buttons -->
             <HBox spacing="12" alignment="CENTER_LEFT">
-                <Label text="Subnet"/>
-                <TextField fx:id="tfSubnet" prefWidth="150"/>
-                <Label text="From"/>
+                <Label text="Subnet" minWidth="55" prefWidth="55"/>
+                <TextField fx:id="tfSubnet" prefWidth="152"/>
+
+                <Region prefWidth="15"/>
+
+                <Label text="From" minWidth="45" prefWidth="45"/>
                 <TextField fx:id="tfStart" prefWidth="60"/>
-                <Label text="To" />
+
+                <Label text="To" minWidth="30" prefWidth="30"/>
                 <TextField fx:id="tfEnd" prefWidth="60"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
@@ -28,12 +32,16 @@
 
             <!-- Row 2: Ports + Mode -->
             <HBox spacing="12" alignment="CENTER_LEFT">
-                <Label text="Ports"/>
-                <TextField fx:id="tfPortFrom" promptText="1" prefWidth="55"/>
+                <Label text="Ports" minWidth="55" prefWidth="55"/>
+                <TextField fx:id="tfPortFrom" prefWidth="60"/>
+
                 <Label text="–"/>
-                <TextField fx:id="tfPortTo" promptText="1024" prefWidth="55"/>
-                <Label text="Mode"/>
-                <ComboBox fx:id="cbMode" prefWidth="150"/>
+                <TextField fx:id="tfPortTo" prefWidth="60"/>
+
+                <Region prefWidth="15"/>
+
+                <Label text="Mode" minWidth="46" prefWidth="46"/>
+                <ComboBox fx:id="cbMode" prefWidth="173"/>
             </HBox>
         </VBox>
     </top>

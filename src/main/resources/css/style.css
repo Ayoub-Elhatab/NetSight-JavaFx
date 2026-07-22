@@ -21,16 +21,23 @@
     -fx-background-color: -fx-primary-color;
     -fx-border-color: -fx-primary-color;
     -fx-text-fill: white;
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-padding: 4 14;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 16;
     -fx-cursor: hand;
     -fx-font-weight: bold;
-    -fx-border-width: 1.5;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 4, 0, 0, 1);
 }
 .button:hover {
-    -fx-background-color: #00BFA5;
-    -fx-border-color: #00BFA5;
+    -fx-background-color: #009688;
+    -fx-border-color: #009688;
+}
+.button:pressed {
+    -fx-background-color: #00796B;
+    -fx-border-color: #00796B;
+
+    -fx-effect: none;
 }
 
 /* Table */
@@ -77,17 +84,17 @@
 /* TextField */
 .text-field {
     -fx-background-color: white;
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: #D0D7DE;
-    -fx-border-width: 1.5;
-    -fx-padding: 4 10;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #BFC7D1;
+    -fx-border-width: 1;
+    -fx-padding: 6 10;
     -fx-text-fill: #333333;
     -fx-prompt-text-fill: #9E9E9E;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);
 }
 .text-field:focused {
     -fx-border-color: -fx-primary-color;
-    -fx-border-width: 1.5;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
