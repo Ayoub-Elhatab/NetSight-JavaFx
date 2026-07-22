@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import java.util.concurrent.atomic.AtomicBoolean;
 import static com.ayoub.netsight.utils.JavaFxUtils.showInfo;
 
 /**
@@ -65,6 +65,8 @@ public class MainController {
 
     private final ObservableList<HostInfo> results = FXCollections.observableArrayList();
     private final ScanService scanService = new ScanService();
+
+    private final AtomicBoolean scanning = new AtomicBoolean(false);
 
     /**
      * Initializes the controller after the FXML is loaded.
@@ -115,43 +117,26 @@ public class MainController {
         totalScanned  = 0;
         totalAlive    = 0;
         totalWithPorts = 0;
+        scanning.set(true);
 
         String subnetInput = tfSubnet.getText().trim();
         String startText = tfStart.getText().trim();
         String endText = tfEnd.getText().trim();
 
-        String subnet;
-        int start, end;
-
-        // Single IP mode — if From/To are empty
-        if (startText.isEmpty() || endText.isEmpty()) {
-            //  "192.168.110.200" → subnet="192.168.110." start=200 end=200
-            int lastDot = subnetInput.lastIndexOf('.');
-            if (lastDot == -1) {
-                lblStatus.setText("Invalid IP");
-                btnScan.setDisable(false);
-                btnStop.setDisable(true);
-                return;
-            }
-            subnet = subnetInput.substring(0, lastDot + 1);
-            start  = Integer.parseInt(subnetInput.substring(lastDot + 1));
-            end    = start;
-        } else {
-            // Range mode — subnet field should be "192.168.1." with From/To filled
-            subnet = subnetInput.endsWith(".") ? subnetInput : subnetInput + ".";
-            start  = Integer.parseInt(startText);
-            end    = Integer.parseInt(endText);
+        String[] range = resolveSubnetRange(subnetInput, startText, endText);
+        if (range == null) {
+            lblStatus.setText("Invalid IP");
+            btnScan.setDisable(false);
+            btnStop.setDisable(true);
+            return;
         }
+        String subnet = range[0];
+        int start     = Integer.parseInt(range[1]);
+        int end       = Integer.parseInt(range[2]);
 
         lblStatus.setText("Scanning…");
 
-        int portFrom = tfPortFrom.getText().trim().isEmpty() ? 1    : Integer.parseInt(tfPortFrom.getText().trim());
-        int portTo   = tfPortTo.getText().trim().isEmpty()   ? 1024 : Integer.parseInt(tfPortTo.getText().trim());
-
-        List<Integer> portsToScan = new ArrayList<>();
-        for (int p = portFrom; p <= portTo; p++) {
-            portsToScan.add(p);
-        }
+        List<Integer> portsToScan = buildPortList();
 
         int threads, timeout;
         switch (cbMode.getValue()) {
@@ -162,6 +147,7 @@ public class MainController {
 
         scanService.scan(subnet, start, end, threads, timeout,portsToScan,
                 host -> {
+                    if (!scanning.get()) return;
                     results.add(host);
                     totalAlive++;
                     if (!host.getOpenPorts().isEmpty()) totalWithPorts++;
@@ -169,6 +155,7 @@ public class MainController {
                     lblFound.setText(n + " host" + (n == 1 ? "" : "s") + " found");
                 },
                 (done, total) -> {
+                    if (!scanning.get()) return;
                     pbProgress.setProgress((double) done / total);
                     totalScanned = done;
                     if (done >= total) {
@@ -189,10 +176,14 @@ public class MainController {
      */
     @FXML
     private void onStop() {
+        scanning.set(false);
         scanService.stop();
         lblStatus.setText("Stopped");
         btnScan.setDisable(false);
         btnStop.setDisable(true);
+        btnClear.setDisable(false);
+        btnExport.setDisable(false);
+        if (totalAlive > 0) showScanStatistics(totalScanned);
     }
 
     /**
@@ -254,31 +245,21 @@ public class MainController {
      * @param totalHosts the total number of IP addresses that were probed
      */
     private void showScanStatistics(int totalHosts) {
-        long elapsed = System.currentTimeMillis() - scanStartTime;
+        long elapsed      = System.currentTimeMillis() - scanStartTime;
         double totalSec   = elapsed / 1000.0;
-        double avgPerHost = totalSec / totalHosts;
+        double avgPerHost = totalHosts > 0 ? totalSec / totalHosts : 0;
 
-        String subnetInput = tfSubnet.getText().trim();
-        String startText   = tfStart.getText().trim();
-        String endText     = tfEnd.getText().trim();
-
-        String rangeText;
-        if (startText.isEmpty() || endText.isEmpty()) {
-            rangeText = subnetInput;
-        } else {
-            String subnet = subnetInput.endsWith(".") ? subnetInput : subnetInput + ".";
-            rangeText = subnet + startText + " - " + subnet + endText;
-        }
+        String[] range   = resolveSubnetRange(tfSubnet.getText().trim(), tfStart.getText().trim(), tfEnd.getText().trim());
+        String rangeText = range != null ? range[0] + range[1] + " - " + range[0] + range[2] : tfSubnet.getText().trim();
 
         String content = "Total time: "        + String.format("%.2f", totalSec)   + " sec\n\n" +
-                "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n\n" +
-                "IP Range: "          + rangeText                          + "\n\n" +
-                "Hosts scanned: "     + totalHosts                         + "\n\n" +
-                "Hosts alive: "       + totalAlive                         + "\n\n" +
-                "With open ports: "   + totalWithPorts;
+                        "Average time/host: " + String.format("%.2f", avgPerHost) + " sec\n\n" +
+                        "IP Range: "          + rangeText                          + "\n\n" +
+                        "Hosts scanned: "     + totalHosts                         + "\n\n" +
+                        "Hosts alive: "       + totalAlive                         + "\n\n" +
+                        "With open ports: "   + totalWithPorts;
 
-        showInfo("Scan Statistics",content);
-
+        showInfo("Scan Statistics", content);
     }
 
     /**
@@ -355,5 +336,45 @@ public class MainController {
 
             Clipboard.getSystemClipboard().setContent(new ClipboardContent() {{ putString(details); }});
         });
+    }
+
+    /**
+     * Builds the list of ports to scan based on the port range fields.
+     * Defaults to 1–1024 if the fields are empty.
+     *
+     * @return list of port numbers to probe
+     */
+    private List<Integer> buildPortList() {
+        int portFrom = tfPortFrom.getText().trim().isEmpty() ? 1    : Integer.parseInt(tfPortFrom.getText().trim());
+        int portTo   = tfPortTo.getText().trim().isEmpty()   ? 1024 : Integer.parseInt(tfPortTo.getText().trim());
+        List<Integer> ports = new ArrayList<>();
+        for (int p = portFrom; p <= portTo; p++) ports.add(p);
+        return ports;
+    }
+
+    /**
+     * Resolves the subnet prefix and host range from the input fields.
+     * Supports single IP mode (From/To empty) and range mode.
+     *
+     * @param subnetInput the value from the subnet text field
+     * @param startText the value from the From text field
+     * @param endText the value from the To text field
+     * @return a {@code String[]} of {subnet, start, end},
+     *                    or {@code null} if the input is invalid
+     */
+    private String[] resolveSubnetRange(String subnetInput, String startText, String endText) {
+        // Single IP mode — if From/To are empty
+        if (startText.isEmpty() || endText.isEmpty()) {
+            //  "192.168.110.200" → subnet="192.168.110." start=200 end=200
+            int lastDot = subnetInput.lastIndexOf('.');
+            if (lastDot == -1) return null;
+            String subnet = subnetInput.substring(0, lastDot + 1);
+            String host   = subnetInput.substring(lastDot + 1);
+            return new String[]{subnet, host, host};
+        } else {
+            // Range mode — subnet field should be "192.168.1." with From/To filled
+            String subnet = subnetInput.endsWith(".") ? subnetInput : subnetInput + ".";
+            return new String[]{subnet, startText, endText};
+        }
     }
 }

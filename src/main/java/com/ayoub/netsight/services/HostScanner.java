@@ -3,7 +3,6 @@ package com.ayoub.netsight.services;
 
 import com.ayoub.netsight.model.HostInfo;
 import lombok.RequiredArgsConstructor;
-
 import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.Callable;
